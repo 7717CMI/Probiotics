@@ -1,0 +1,216 @@
+import React, { useState, useMemo } from 'react';
+import { Box, Grid, Typography, useTheme } from "@mui/material";
+import ScienceOutlinedIcon from "@mui/icons-material/ScienceOutlined";
+import { tokens } from "../../theme";
+import Header from "../../components/Header";
+import StatBox from "../../components/StatBox";
+import FilterDropdown from "../../components/FilterDropdown";
+import BarChart from "../../components/BarChart";
+import PieChart from "../../components/PieChart";
+import LineChart from "../../components/LineChart";
+import { getData, filterDataframe, formatNumber } from "../../utils/dataGenerator";
+
+function FDF() {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  
+  const data = getData();
+  
+  const [filters, setFilters] = useState({
+    year: [],
+    market: [],
+    region: [],
+    incomeType: [],
+    country: [],
+    brand: [],
+    fdf: [],
+    roa: [],
+  });
+
+  const filteredData = useMemo(() => {
+    return filterDataframe(data, {
+      year: filters.year,
+      market: filters.market,
+      region: filters.region,
+      incomeType: filters.incomeType,
+      country: filters.country,
+      brand: filters.brand,
+      fdf: filters.fdf,
+      roa: filters.roa,
+    });
+  }, [data, filters]);
+
+  const uniqueOptions = useMemo(() => {
+    return {
+      years: [...new Set(data.map(d => d.year))].sort(),
+      markets: [...new Set(data.map(d => d.market))].sort(),
+      regions: [...new Set(data.map(d => d.region))].sort(),
+      incomeTypes: [...new Set(data.map(d => d.incomeType))].sort(),
+      countries: [...new Set(data.map(d => d.country))].sort(),
+      brands: [...new Set(data.map(d => d.brand))].sort(),
+      fdfs: [...new Set(data.map(d => d.fdf))].sort(),
+      roas: [...new Set(data.map(d => d.roa))].sort(),
+    };
+  }, [data]);
+
+  const kpis = useMemo(() => {
+    if (filteredData.length === 0) {
+      return {
+        totalRevenue: "N/A",
+        topFDF: "N/A",
+        topROA: "N/A",
+        avgRevenue: "N/A",
+      };
+    }
+
+    const totalRevenue = filteredData.reduce((sum, d) => sum + (d.revenue || d.marketValueUsd || 0), 0);
+    
+    const fdfGroups = filteredData.reduce((acc, d) => {
+      acc[d.fdf] = (acc[d.fdf] || 0) + (d.revenue || d.marketValueUsd || 0);
+      return acc;
+    }, {});
+    const topFDF = Object.entries(fdfGroups).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+    
+    const roaGroups = filteredData.reduce((acc, d) => {
+      acc[d.roa] = (acc[d.roa] || 0) + (d.revenue || d.marketValueUsd || 0);
+      return acc;
+    }, {});
+    const topROA = Object.entries(roaGroups).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+    
+    const fdfRevenues = Object.values(fdfGroups);
+    const avgRevenue = fdfRevenues.length > 0 ? fdfRevenues.reduce((a, b) => a + b, 0) / fdfRevenues.length : 0;
+
+    return {
+      totalRevenue: formatNumber(totalRevenue),
+      topFDF,
+      topROA,
+      avgRevenue: formatNumber(avgRevenue),
+    };
+  }, [filteredData]);
+
+  const chartData1 = useMemo(() => {
+    const grouped = filteredData.reduce((acc, d) => {
+      acc[d.fdf] = (acc[d.fdf] || 0) + (d.revenue || d.marketValueUsd || 0);
+      return acc;
+    }, {});
+    return Object.entries(grouped).map(([fdf, revenue]) => ({
+      fdf,
+      revenue,
+    }));
+  }, [filteredData]);
+
+  const chartData2 = useMemo(() => {
+    const grouped = filteredData.reduce((acc, d) => {
+      acc[d.roa] = (acc[d.roa] || 0) + (d.revenue || d.marketValueUsd || 0);
+      return acc;
+    }, {});
+    return Object.entries(grouped).map(([roa, revenue]) => ({
+      roa,
+      revenue,
+    }));
+  }, [filteredData]);
+
+  const chartData3 = useMemo(() => {
+    const matrix = filteredData.reduce((acc, d) => {
+      if (!acc[d.fdf]) acc[d.fdf] = {};
+      acc[d.fdf][d.roa] = (acc[d.fdf][d.roa] || 0) + (d.revenue || d.marketValueUsd || 0);
+      return acc;
+    }, {});
+    
+    return Object.entries(matrix).flatMap(([fdf, roaGroups]) =>
+      Object.entries(roaGroups).map(([roa, revenue]) => ({
+        fdf,
+        roa,
+        revenue,
+      }))
+    );
+  }, [filteredData]);
+
+  return (
+    <Box m="20px">
+      <Header title="FDF Analysis" subtitle="Formulation and ROA performance" />
+
+      <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px", mb: "20px" }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="Year" value={filters.year} onChange={(e) => setFilters({ ...filters, year: e.target.value })} options={uniqueOptions.years} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="Market" value={filters.market} onChange={(e) => setFilters({ ...filters, market: e.target.value })} options={uniqueOptions.markets} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="Region" value={filters.region} onChange={(e) => setFilters({ ...filters, region: e.target.value })} options={uniqueOptions.regions} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="Income Type" value={filters.incomeType} onChange={(e) => setFilters({ ...filters, incomeType: e.target.value })} options={uniqueOptions.incomeTypes} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="Country" value={filters.country} onChange={(e) => setFilters({ ...filters, country: e.target.value })} options={uniqueOptions.countries} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="Brand" value={filters.brand} onChange={(e) => setFilters({ ...filters, brand: e.target.value })} options={uniqueOptions.brands} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="FDF" value={filters.fdf} onChange={(e) => setFilters({ ...filters, fdf: e.target.value })} options={uniqueOptions.fdfs} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <FilterDropdown label="ROA" value={filters.roa} onChange={(e) => setFilters({ ...filters, roa: e.target.value })} options={uniqueOptions.roas} />
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Grid container spacing={2} sx={{ mb: "20px" }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px" }}>
+            <StatBox title={kpis.totalRevenue} subtitle="Total Revenue" icon={<ScienceOutlinedIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />} progress="0.75" />
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px" }}>
+            <StatBox title={kpis.topFDF} subtitle="Top Formulation" icon={<ScienceOutlinedIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />} progress="0.70" />
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px" }}>
+            <StatBox title={kpis.topROA} subtitle="Top ROA" icon={<ScienceOutlinedIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />} progress="0.60" />
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px" }}>
+            <StatBox title={kpis.avgRevenue} subtitle="Avg Revenue per FDF" icon={<ScienceOutlinedIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />} progress="0.65" />
+          </Box>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px", height: "450px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <Typography variant="h6" color={colors.grey[100]} sx={{ mb: "10px" }}>Revenue by Formulation</Typography>
+            <Box sx={{ flex: 1, minHeight: 0 }}>
+              <BarChart data={chartData1} dataKey="revenue" nameKey="fdf" color={colors.blueAccent[500]} />
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px", height: "450px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <Typography variant="h6" color={colors.grey[100]} sx={{ mb: "10px" }}>Revenue Distribution by ROA</Typography>
+            <Box sx={{ flex: 1, minHeight: 0 }}>
+              <PieChart data={chartData2} dataKey="revenue" nameKey="roa" />
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ backgroundColor: colors.primary[400], padding: "20px", borderRadius: "8px", height: "450px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <Typography variant="h6" color={colors.grey[100]} sx={{ mb: "10px" }}>Revenue Matrix: FDF vs ROA</Typography>
+            <Box sx={{ flex: 1, minHeight: 0 }}>
+              <BarChart data={chartData3} dataKey="revenue" nameKey="fdf" color={colors.blueAccent[500]} />
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+}
+
+export default FDF;
+
