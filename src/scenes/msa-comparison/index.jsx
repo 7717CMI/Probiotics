@@ -64,6 +64,7 @@ function MSAComparison() {
         totalValue: "N/A",
         totalVolume: "N/A",
         avgShare: "N/A",
+        avgYoY: "N/A",
       };
     }
 
@@ -72,12 +73,16 @@ function MSAComparison() {
     const totalValue = filteredData.reduce((sum, d) => sum + (d.value || d.marketValueUsd || 0), 0);
     const totalVolume = filteredData.reduce((sum, d) => sum + (d.volumeUnits || 0), 0);
     const avgShare = filteredData.reduce((sum, d) => sum + (d.share || d.marketSharePct || 0), 0) / filteredData.length;
+    
+    // Calculate average YoY growth from filtered data
+    const avgYoY = filteredData.reduce((sum, d) => sum + (d.yoy || d.yoyGrowth || 0), 0) / filteredData.length;
 
     return {
       marketSize: `${(marketSize / 1000).toFixed(1)}M`, // In millions
       totalValue: formatNumber(totalValue),
       totalVolume: formatNumber(totalVolume),
       avgShare: `${avgShare.toFixed(1)}%`,
+      avgYoY: `${avgYoY.toFixed(1)}%`,
     };
   }, [filteredData]);
 

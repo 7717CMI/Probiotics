@@ -52,7 +52,7 @@ function LineChart({ data, dataKeys, nameKey, colors = ["#8884d8", "#82ca9d"], x
         margin={{
           top: 20,
           right: 30,
-          left: 60,
+          left: 80,
           bottom: 100,
         }}
       >
@@ -83,7 +83,7 @@ function LineChart({ data, dataKeys, nameKey, colors = ["#8884d8", "#82ca9d"], x
             value: yAxisLabel || "Value",
             angle: -90,
             position: "insideLeft",
-            offset: 10,
+            offset: -10,
             style: { 
               fontSize: "14px", 
               fontWeight: "bold",

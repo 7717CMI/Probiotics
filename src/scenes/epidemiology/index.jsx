@@ -11,7 +11,6 @@ import BarChart from "../../components/BarChart";
 import PieChart from "../../components/PieChart";
 import LineChart from "../../components/LineChart";
 import DemoNotice from "../../components/DemoNotice";
-import ChartInstructions from "../../components/ChartInstructions";
 import LocalHospitalOutlinedIcon from "@mui/icons-material/LocalHospitalOutlined";
 import { getData, filterDataframe, formatNumber } from "../../utils/dataGenerator";
 
@@ -173,8 +172,6 @@ function Epidemiology() {
       <Header title="Epidemiology Analysis" subtitle="Disease prevalence and incidence trends" />
 
       <DemoNotice />
-
-      <ChartInstructions />
 
       {/* Filters */}
       <Box

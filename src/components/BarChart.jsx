@@ -51,7 +51,7 @@ function BarChart({ data, dataKey, nameKey, color = "#8884d8", xAxisLabel, yAxis
         margin={{
           top: 20,
           right: 30,
-          left: 60,
+          left: 80,
           bottom: 100,
         }}
       >
@@ -82,7 +82,7 @@ function BarChart({ data, dataKey, nameKey, color = "#8884d8", xAxisLabel, yAxis
             value: yAxisLabel || dataKey,
             angle: -90,
             position: "insideLeft",
-            offset: 10,
+            offset: -10,
             style: { 
               fontSize: "14px", 
               fontWeight: "bold",

@@ -675,3 +675,4 @@ For questions about specific data points, methodologies, or custom analyses, ple
 **Data Range:** 2021-2035 (15 years)  
 **Total Records:** 1.2M+ vaccine market transactions
 
+

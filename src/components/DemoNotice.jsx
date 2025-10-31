@@ -1,53 +1,75 @@
 import React from 'react';
 import { Box, Typography, useTheme } from "@mui/material";
-import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
-import { tokens } from "../theme";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 function DemoNotice() {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
 
   return (
     <Box
       sx={{
-        backgroundColor: theme.palette.mode === "dark" 
-          ? "rgba(244, 67, 54, 0.15)" 
-          : "rgba(255, 152, 0, 0.15)",
-        border: `2px solid ${theme.palette.mode === "dark" ? "#f44336" : "#ff9800"}`,
-        padding: "20px 30px",
+        backgroundColor: theme.palette.mode === "dark" ? "rgba(255, 165, 0, 0.2)" : "#FFEDCC",
+        padding: "24px 28px",
         borderRadius: "12px",
-        mb: "30px",
+        mb: "24px",
         display: "flex",
-        alignItems: "center",
-        gap: "15px",
+        alignItems: "flex-start",
+        gap: 2.5,
+        border: "3px solid #FF8C00",
         boxShadow: theme.palette.mode === "dark" 
-          ? "0 4px 12px rgba(244, 67, 54, 0.3)" 
-          : "0 4px 12px rgba(255, 152, 0, 0.3)",
+          ? "0 4px 20px rgba(255, 140, 0, 0.3)" 
+          : "0 4px 20px rgba(255, 140, 0, 0.25)",
+        position: "relative",
+        overflow: "hidden",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "4px",
+          background: "linear-gradient(90deg, #FF8C00, #FFA500, #FF8C00)",
+          animation: "shimmer 2s infinite linear",
+        },
+        "@keyframes shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       }}
     >
-      <WarningAmberOutlinedIcon 
+      <WarningAmberIcon 
         sx={{ 
-          fontSize: "42px", 
-          color: theme.palette.mode === "dark" ? "#ff5252" : "#ff6f00",
-          flexShrink: 0
+          color: "#FF8C00", 
+          fontSize: "40px",
+          flexShrink: 0,
+          mt: "2px",
+          filter: "drop-shadow(0 2px 4px rgba(255, 140, 0, 0.3))",
         }} 
       />
       <Box>
-        <Typography 
-          variant="h4" 
+        <Typography
+          variant="h5"
           sx={{ 
-            color: theme.palette.mode === "dark" ? "#ff5252" : "#ff6f00",
-            fontWeight: "bold",
-            mb: "5px"
+            color: "#FF6600",
+            fontWeight: "800",
+            mb: 1,
+            letterSpacing: "1px",
+            textTransform: "uppercase",
+            fontSize: "18px",
+            textShadow: theme.palette.mode === "dark" 
+              ? "0 1px 2px rgba(0, 0, 0, 0.5)" 
+              : "none",
           }}
         >
           ⚠ DEMO DATASET - FOR ILLUSTRATION PURPOSES ONLY
         </Typography>
-        <Typography 
-          variant="h6" 
+        <Typography
+          variant="body1"
           sx={{ 
-            color: theme.palette.mode === "dark" ? colors.grey[300] : colors.grey[700],
-            lineHeight: 1.4
+            color: theme.palette.mode === "dark" ? "#e0e0e0" : "#333333",
+            lineHeight: 1.7,
+            fontSize: "15px",
+            fontWeight: "500"
           }}
         >
           This dashboard uses synthetic data for demonstration purposes. No real-world data or actual vaccine market information is represented in this application.

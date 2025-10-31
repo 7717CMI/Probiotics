@@ -55,6 +55,7 @@ function VaccinationRate() {
         patientsVaccinated: "N/A",
         avgVaxRate: "N/A",
         topRegion: "N/A",
+        numCountries: "0",
       };
     }
 
@@ -73,11 +74,16 @@ function VaccinationRate() {
       .map(([region, rates]) => [region, rates.reduce((a, b) => a + b, 0) / rates.length])
       .sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
+    // Count unique countries in filtered data
+    const uniqueCountries = [...new Set(filteredData.map(d => d.country))];
+    const numCountries = uniqueCountries.length;
+
     return {
       marketSize: `${(marketSize / 1000).toFixed(1)}M`, // In millions
       patientsVaccinated: `${(totalPatients / 1000).toFixed(1)}K`,
       avgVaxRate: `${avgVaxRate.toFixed(1)}%`,
       topRegion,
+      numCountries: numCountries.toString(),
     };
   }, [filteredData]);
 
