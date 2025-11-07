@@ -227,7 +227,6 @@ export function RegionCountryStackedBarChart({
           formatter={(value) => (
             <span style={{ fontSize: '11px', fontWeight: 500 }}>{value}</span>
           )}
-          wrapperClassName="legend-wrapper"
         />
         {transformedData.countries.map((country, index) => (
           <Bar

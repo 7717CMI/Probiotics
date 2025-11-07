@@ -110,8 +110,10 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
       })
       .map(d => ({
         region: d.region.trim(),
+        disease: d.industrySector.trim(),
         industry: d.industrySector.trim(),
-        value: 1
+        value: 1,
+        label: `${d.region.trim()} - ${d.industrySector.trim()}`
       }))
 
     // Get unique industries for stacking
