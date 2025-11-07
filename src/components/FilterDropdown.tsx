@@ -82,7 +82,7 @@ export function FilterDropdown({ label, value, onChange, options, multiple = tru
     }
   }
 
-  const handleClear = (e: React.MouseEvent) => {
+  const handleClear = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation()
     if (multiple) {
       onChange([])
@@ -136,14 +136,26 @@ export function FilterDropdown({ label, value, onChange, options, multiple = tru
         </span>
         <div className="flex items-center gap-1 flex-shrink-0">
           {getSelectedCount() > 0 && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-navy-light transition-colors"
+            <div
+              role="button"
+              tabIndex={0}
+              onMouseDown={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleClear(e)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleClear(e)
+                }
+              }}
+              className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-navy-light transition-colors cursor-pointer"
               aria-label="Clear selection"
             >
               <X size={14} className={isDark ? 'text-text-secondary-dark' : 'text-text-secondary-light'} />
-            </button>
+            </div>
           )}
           <ChevronDown 
             size={16} 
@@ -156,14 +168,15 @@ export function FilterDropdown({ label, value, onChange, options, multiple = tru
 
       {isOpen && (
         <div
-          className={`absolute z-50 w-full mt-1 rounded-lg border shadow-lg max-h-60 overflow-y-auto ${
+          className={`absolute z-[9999] w-full mt-1 rounded-lg border shadow-lg max-h-60 overflow-y-auto ${
             isDark
               ? 'bg-navy-card border-navy-light'
               : 'bg-white border-gray-200'
           }`}
+          style={{ top: '100%' }}
         >
           <div className="p-1">
-            {options.length === 0 ? (
+            {options.length === 0 && (!groupedOptions || groupedOptions.length === 0) ? (
               <div className={`px-3 py-2 text-sm ${
                 isDark ? 'text-text-secondary-dark' : 'text-text-secondary-light'
               }`}>
@@ -174,7 +187,7 @@ export function FilterDropdown({ label, value, onChange, options, multiple = tru
               groupedOptions.map((group) => (
                 <div key={group.group}>
                   {/* Group Header */}
-                  <div className={`px-3 py-2 text-xs font-semibold uppercase tracking-wider sticky top-0 ${
+                  <div className={`px-3 py-2 text-xs font-semibold uppercase tracking-wider sticky top-0 z-10 ${
                     isDark 
                       ? 'bg-navy-card text-text-secondary-dark border-b border-navy-light' 
                       : 'bg-gray-50 text-text-secondary-light border-b border-gray-200'

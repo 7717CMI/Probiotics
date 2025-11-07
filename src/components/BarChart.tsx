@@ -32,6 +32,9 @@ export function BarChart({ data, dataKey, nameKey, color = '#0075FF', xAxisLabel
       const payloadData = payload[0].payload || {}
       const country = payloadData.country
       
+      // Get the actual name from the payload
+      const actualLabel = payloadData[nameKey || 'name'] || label || 'Unknown'
+      
       // Handle multiple countries
       const countriesToShow = Array.isArray(showCountry) ? showCountry : (showCountry && country ? [country] : [])
       
@@ -41,7 +44,7 @@ export function BarChart({ data, dataKey, nameKey, color = '#0075FF', xAxisLabel
             ? 'bg-navy-card border-electric-blue text-white' 
             : 'bg-white border-electric-blue text-gray-900'
         }`}>
-          <p className="font-bold text-base mb-2">{label}</p>
+          <p className="font-bold text-base mb-2">{actualLabel}</p>
           {countriesToShow.length > 0 && (
             <p className="text-sm mb-1">
               {countriesToShow.length === 1 ? 'Country' : 'Countries'}: <strong>{countriesToShow.join(', ')}</strong>
@@ -77,24 +80,24 @@ export function BarChart({ data, dataKey, nameKey, color = '#0075FF', xAxisLabel
           top: 50,
           right: 40,
           left: 80,
-          bottom: 80,
+          bottom: 120,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#4A5568' : '#EAEAEA'} />
         <XAxis 
-          dataKey={nameKey} 
+          dataKey={nameKey || "name"} 
           stroke={isDark ? '#A0AEC0' : '#4A5568'}
           style={{ fontSize: '13px', fontWeight: 500 }}
-          angle={0}
-          textAnchor="middle"
-          height={60}
+          angle={-45}
+          textAnchor="end"
+          height={100}
           interval={0}
-          tick={{ fill: isDark ? '#E2E8F0' : '#2D3748' }}
-          tickMargin={15}
+          tick={{ fill: isDark ? '#E2E8F0' : '#2D3748', fontSize: 12 }}
+          tickMargin={10}
           label={{
-            value: xAxisLabel || nameKey,
+            value: xAxisLabel || nameKey || 'Category',
             position: 'insideBottom',
-            offset: -10,
+            offset: -5,
             style: { 
               fontSize: '14px', 
               fontWeight: 500,

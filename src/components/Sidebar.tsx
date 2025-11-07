@@ -1,4 +1,4 @@
-import { Home, Activity, Heart, TrendingUp, Mail, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Home, TrendingUp, Users, Mail, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Logo } from './Logo'
@@ -26,9 +26,8 @@ export function Sidebar({ activeItem = 'Home', isOpen = true, onClose, onNavigat
 
   const navItems = [
     { icon: Home, label: 'Home', id: 'Home' },
-    { icon: Activity, label: 'Epidemiology', id: 'Epidemiology' },
-    { icon: Heart, label: 'Vaccination Rate', id: 'VaccinationRate' },
     { icon: TrendingUp, label: 'Market Analysis', id: 'MarketAnalysis' },
+    { icon: Users, label: 'Customer Intelligence', id: 'CustomerIntelligence' },
     { icon: Mail, label: 'Contact Us', id: 'Contact' },
   ]
 

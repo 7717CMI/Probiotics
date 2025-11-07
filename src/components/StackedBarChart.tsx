@@ -152,44 +152,50 @@ export function StackedBarChart({ data, dataKey, nameKey, diseaseKey, uniqueDise
       <RechartsBarChart
         data={transformedData}
         margin={{
-          top: 5,
-          right: 15,
-          left: 65,
-          bottom: 100,
+          top: 50,
+          right: 40,
+          left: 80,
+          bottom: 120,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#4A5568' : '#E2E8F0'} />
         <XAxis 
           dataKey="region" 
-          stroke={isDark ? '#FFFFFF' : '#2D3748'}
-          style={{ fontSize: '10px' }}
+          stroke={isDark ? '#A0AEC0' : '#4A5568'}
+          style={{ fontSize: '13px', fontWeight: 500 }}
           angle={-45}
           textAnchor="end"
-          height={90}
+          height={100}
           interval={0}
+          tick={{ fill: isDark ? '#E2E8F0' : '#2D3748', fontSize: 12 }}
+          tickMargin={10}
           label={{
             value: xAxisLabel || 'Region',
             position: 'insideBottom',
-            offset: 5,
+            offset: -5,
             style: { 
-              fontSize: '11px', 
-              fill: isDark ? '#FFFFFF' : '#2D3748'
+              fontSize: '14px', 
+              fontWeight: 500,
+              fill: isDark ? '#E2E8F0' : '#2D3748'
             }
           }}
         />
         <YAxis 
-          stroke={isDark ? '#FFFFFF' : '#2D3748'}
-          style={{ fontSize: '10px' }}
+          stroke={isDark ? '#A0AEC0' : '#4A5568'}
+          style={{ fontSize: '13px', fontWeight: 500 }}
           tickFormatter={(value) => formatNumber(value)}
-          width={85}
+          width={90}
+          tick={{ fill: isDark ? '#E2E8F0' : '#2D3748' }}
+          tickMargin={15}
           label={{
             value: yAxisLabel || 'Value',
             angle: -90,
             position: 'insideLeft',
-            offset: -5,
+            offset: -10,
             style: { 
-              fontSize: '11px', 
-              fill: isDark ? '#FFFFFF' : '#2D3748',
+              fontSize: '14px', 
+              fontWeight: 500,
+              fill: isDark ? '#E2E8F0' : '#2D3748',
               textAnchor: 'middle'
             }
           }}
@@ -197,14 +203,20 @@ export function StackedBarChart({ data, dataKey, nameKey, diseaseKey, uniqueDise
         <Tooltip content={<CustomTooltip />} />
         <Legend 
           wrapperStyle={{ 
-            color: isDark ? '#FFFFFF' : '#2D3748', 
-            paddingTop: '5px',
-            fontSize: '11px'
+            color: isDark ? '#E2E8F0' : '#2D3748', 
+            paddingTop: '15px',
+            fontSize: '12px',
+            fontWeight: 500
           }}
-          iconSize={8}
-          formatter={(value) => (
-            <span style={{ fontSize: '11px' }}>{value}</span>
-          )}
+          iconSize={12}
+          iconType="circle"
+          formatter={(value) => {
+            // Truncate long industry names in legend
+            const displayValue = value.length > 30 ? value.substring(0, 27) + '...' : value
+            return (
+              <span style={{ fontSize: '12px', fontWeight: 500 }}>{displayValue}</span>
+            )
+          }}
         />
         {uniqueDiseases.map((disease) => (
           <Bar

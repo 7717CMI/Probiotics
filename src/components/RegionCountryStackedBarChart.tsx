@@ -14,7 +14,7 @@ import { formatNumber } from '../utils/dataGenerator'
 import { getChartColors } from '../utils/chartColors'
 
 interface RegionCountryStackedBarChartProps {
-  data: Array<{ region: string; country: string; [key: string]: any }>
+  data: Array<{ region: string; country: string; year?: number; yearRegion?: string; [key: string]: any }>
   dataKey: string
   xAxisLabel?: string
   yAxisLabel?: string
@@ -31,19 +31,25 @@ export function RegionCountryStackedBarChart({
   const { theme } = useTheme()
   const isDark = theme === 'dark'
 
-  // Transform data: group by region, then by country
+  // Transform data: group by year-region, then by country
   const transformedData = useMemo(() => {
     const grouped: Record<string, Record<string, number>> = {}
+    const yearRegionMap: Record<string, { year: number; region: string }> = {}
     
     data.forEach((entry) => {
-      const region = entry.region
+      // Use yearRegion if available (for year-grouped data), otherwise fall back to region
+      const groupKey = entry.yearRegion || entry.region
       const country = entry.country
       const value = entry[dataKey] || 0
       
-      if (!grouped[region]) {
-        grouped[region] = {}
+      if (!grouped[groupKey]) {
+        grouped[groupKey] = {}
+        yearRegionMap[groupKey] = {
+          year: entry.year || 0,
+          region: entry.region
+        }
       }
-      grouped[region][country] = (grouped[region][country] || 0) + value
+      grouped[groupKey][country] = (grouped[groupKey][country] || 0) + value
     })
     
     // Get unique countries for colors
@@ -62,11 +68,25 @@ export function RegionCountryStackedBarChart({
       countryColors[country] = colors[index]
     })
     
+    // Sort by year, then by region
+    const sortedKeys = Object.keys(grouped).sort((a, b) => {
+      const aInfo = yearRegionMap[a]
+      const bInfo = yearRegionMap[b]
+      if (aInfo.year !== bInfo.year) {
+        return aInfo.year - bInfo.year
+      }
+      return aInfo.region.localeCompare(bInfo.region)
+    })
+    
     return {
-      chartData: Object.entries(grouped).map(([region, countries]) => {
-        const result: any = { region }
+      chartData: sortedKeys.map((groupKey) => {
+        const result: any = { 
+          yearRegion: groupKey,
+          year: yearRegionMap[groupKey].year,
+          region: yearRegionMap[groupKey].region
+        }
         countriesArray.forEach((country) => {
-          result[country] = countries[country] || 0
+          result[country] = grouped[groupKey][country] || 0
         })
         return result
       }),
@@ -77,13 +97,20 @@ export function RegionCountryStackedBarChart({
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      const dataPoint = payload[0]?.payload
+      const year = dataPoint?.year
+      const region = dataPoint?.region
+      
       return (
         <div className={`p-4 rounded-lg border-2 shadow-lg ${
           isDark 
             ? 'bg-navy-card border-electric-blue text-white' 
             : 'bg-white border-electric-blue text-gray-900'
         }`}>
-          <p className="font-bold text-base mb-2">Region: {label}</p>
+          {year && (
+            <p className="font-bold text-base mb-1">Year: {year}</p>
+          )}
+          <p className="font-bold text-base mb-2">Region: {region || label}</p>
           {payload
             .filter((entry: any) => entry.value > 0)
             .map((entry: any) => (
@@ -132,27 +159,27 @@ export function RegionCountryStackedBarChart({
       <RechartsBarChart
         data={transformedData.chartData}
         margin={{
-          top: 50,
-          right: 40,
-          left: 80,
-          bottom: 80,
+          top: 20,
+          right: 20,
+          left: 60,
+          bottom: 60,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#4A5568' : '#EAEAEA'} />
         <XAxis 
-          dataKey="region" 
+          dataKey="yearRegion" 
           stroke={isDark ? '#A0AEC0' : '#4A5568'}
-          style={{ fontSize: '13px', fontWeight: 500 }}
+          style={{ fontSize: '12px', fontWeight: 500 }}
           angle={0}
           textAnchor="middle"
           height={60}
           interval={0}
           tick={{ fill: isDark ? '#E2E8F0' : '#2D3748' }}
-          tickMargin={15}
+          tickMargin={10}
           label={{
-            value: xAxisLabel,
+            value: xAxisLabel || 'Year - Region',
             position: 'insideBottom',
-            offset: -10,
+            offset: -5,
             style: { 
               fontSize: '14px', 
               fontWeight: 500,
@@ -186,18 +213,21 @@ export function RegionCountryStackedBarChart({
         <Legend 
           wrapperStyle={{ 
             color: isDark ? '#E2E8F0' : '#2D3748', 
-            paddingTop: '20px',
-            paddingBottom: '10px',
-            fontSize: '12px',
-            fontWeight: 500
+            paddingTop: '10px',
+            paddingBottom: '5px',
+            fontSize: '11px',
+            fontWeight: 500,
+            maxHeight: '100px',
+            overflowY: 'auto'
           }}
-          iconSize={12}
+          iconSize={10}
           iconType="square"
           verticalAlign="bottom"
           align="center"
           formatter={(value) => (
-            <span style={{ fontSize: '12px', fontWeight: 500 }}>{value}</span>
+            <span style={{ fontSize: '11px', fontWeight: 500 }}>{value}</span>
           )}
+          wrapperClassName="legend-wrapper"
         />
         {transformedData.countries.map((country, index) => (
           <Bar

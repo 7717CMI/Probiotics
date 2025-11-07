@@ -1,45 +1,49 @@
-# Vaccine Market Analytics Dashboard
+# Global Shovel Market Analytics Dashboard
 
-A modern React-based dashboard for global vaccine market analytics. Converted from the Python/Plotly Dash implementation to a lightweight, Vercel-deployable React application.
+A modern React-based dashboard for global shovel market analytics. Built with React, TypeScript, Vite, and Tailwind CSS.
 
 ## Features
 
-- **8 Analysis Modules:**
-  - Epidemiology Analysis
-  - Vaccination Rate Analysis
-  - Pricing Analysis
-  - CAGR Analysis
-  - MSA Comparison
-  - Procurement Analysis
-  - Brand-Demographic Analysis
-  - FDF Analysis
+- **Market Analysis:**
+  - Market value and volume analysis by segments
+  - Product Type, Blade Material, Handle Length analysis
+  - Application and End User segmentation
+  - Distribution channel analysis
+  - Regional and country-wise breakdowns
+  - Interactive charts (Bar charts, Pie charts, Stacked bar charts)
+
+- **Customer Intelligence:**
+  - Customer data analysis and insights
+  - Comprehensive customer intelligence metrics
 
 - **Modern UI:**
-  - Material-UI components
   - Dark/Light theme support
   - Responsive design
   - Collapsible sidebar navigation
   - Interactive charts with Recharts
+  - Smooth animations with Framer Motion
 
 - **Features:**
   - Multi-filter data analysis
   - KPI cards with key metrics
-  - Interactive charts (Bar, Line, Pie)
+  - Interactive charts (Bar, Pie, Stacked Bar)
   - Client-side data generation (no server required)
   - Fast and lightweight
+  - Vercel-ready deployment
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm or yarn
+- Node.js (v16 or higher)
+- npm
 
 ### Installation
 
-1. Clone the repository or navigate to the project directory:
+1. Clone the repository:
 ```bash
-cd vaccine-dashboard-react
+git clone https://github.com/7717CMI/d05.git
+cd d05
 ```
 
 2. Install dependencies:
@@ -49,7 +53,7 @@ npm install
 
 3. Start the development server:
 ```bash
-npm start
+npm run dev
 ```
 
 The application will open at [http://localhost:3000](http://localhost:3000)
@@ -62,11 +66,20 @@ To build the application for production:
 npm run build
 ```
 
-This creates an optimized build in the `build` folder.
+This creates an optimized build in the `dist` folder.
 
 ## Deployment to Vercel
 
-### Option 1: Using Vercel CLI
+### Option 1: Using Vercel Dashboard (Recommended)
+
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com)
+3. Import your repository (https://github.com/7717CMI/d05)
+4. Vercel will automatically detect the Vite app and deploy it
+
+The `vercel.json` configuration file is already included for optimal deployment.
+
+### Option 2: Using Vercel CLI
 
 1. Install Vercel CLI:
 ```bash
@@ -78,64 +91,62 @@ npm i -g vercel
 vercel
 ```
 
-### Option 2: Using Vercel Dashboard
-
-1. Push your code to GitHub/GitLab/Bitbucket
-2. Go to [vercel.com](https://vercel.com)
-3. Import your repository
-4. Vercel will automatically detect the React app and deploy it
-
-The `vercel.json` configuration file is already included for optimal deployment.
-
 ## Project Structure
 
 ```
-vaccine-dashboard-react/
+d05/
 ├── public/
-│   └── index.html
+│   ├── combine_global.csv
+│   └── logo.png
 ├── src/
 │   ├── components/
-│   │   ├── BarChart.jsx
-│   │   ├── FilterDropdown.jsx
-│   │   ├── Header.jsx
-│   │   ├── LineChart.jsx
-│   │   ├── PieChart.jsx
-│   │   ├── ProgressCircle.jsx
-│   │   └── StatBox.jsx
-│   ├── scenes/
-│   │   ├── epidemiology/
-│   │   ├── vaccination-rate/
-│   │   ├── global/
-│   │   │   ├── Sidebar.jsx
-│   │   │   └── Topbar.jsx
-│   │   └── home/
+│   │   ├── BarChart.tsx
+│   │   ├── FilterDropdown.tsx
+│   │   ├── Header.tsx
+│   │   ├── PieChart.tsx
+│   │   ├── RegionCountryStackedBarChart.tsx
+│   │   ├── SegmentGroupedBarChart.tsx
+│   │   └── ...
+│   ├── pages/
+│   │   ├── Home.tsx
+│   │   ├── MarketAnalysis.tsx
+│   │   ├── CustomerIntelligence.tsx
+│   │   └── Contact.tsx
 │   ├── utils/
-│   │   └── dataGenerator.js
-│   ├── App.js
-│   ├── index.js
-│   ├── index.css
-│   └── theme.js
+│   │   ├── dataGenerator.ts
+│   │   ├── chartColors.ts
+│   │   └── ...
+│   ├── context/
+│   │   └── ThemeContext.tsx
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
 ├── package.json
 ├── vercel.json
+├── vite.config.ts
 └── README.md
 ```
 
 ## Key Technologies
 
 - **React 18** - UI library
-- **Material-UI (MUI)** - Component library
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Styling
 - **Recharts** - Chart library
-- **React Router** - Routing
-- **React Pro Sidebar** - Sidebar navigation
+- **Framer Motion** - Animations
+- **Lucide React** - Icons
 
 ## Data Generation
 
-The dashboard uses client-side data generation to create comprehensive vacation market data. This eliminates the need for a backend server and makes the application fully static and deployable anywhere.
+The dashboard uses client-side data generation to create comprehensive shovel market data. This eliminates the need for a backend server and makes the application fully static and deployable anywhere.
 
 The data includes:
 - Multiple regions and countries
-- Various diseases and vaccine brands
-- Pricing and market metrics
+- Various product types (Digging Shovel, Snow Shovel, Trenching Shovel, etc.)
+- Blade materials (Carbon Steel, Stainless Steel, Aluminum, etc.)
+- Handle lengths and applications
+- Distribution channels (Offline and Online)
 - Time-series data from 2021-2035
 
 ## Notes
@@ -151,4 +162,3 @@ MIT
 ## Support
 
 For issues or questions, please open an issue on the repository.
-
