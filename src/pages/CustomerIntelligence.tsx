@@ -541,8 +541,9 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
       keyProductCategories: 'NN',
       productSegmentCapsules: 'NN',
       priceSegment: 'NN',
-      internationalNicheBrands: 'NN',
-      durationOfPartnership: 'NN',
+      keyInternationalLocalBrands: 'NN',
+      exclusiveNonExclusivePartnership: 'NN',
+      durationOfBrandPartnerships: 'NN',
       onlineChannel: 'NN',
       offlineChannel: 'NN',
       northIndia: 'NN',
@@ -846,14 +847,14 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
     const headers = ['S.No.', 'Company Name', 'Year Established', 'Headquarters', 'Cities / Regions Covered', 
                      'Ownership Type (Local / Regional / Global)', 'No. of Employees (est.liff available)', 
                      'Revenue/Turnover(if available) 2024', 'Key Contact Person', 'Designation / Role', 
-                     'Email', 'Address (verified / generic)', 'Phone / WhatsApp Number', 'LinkedIn Profile', 'Website URL']
+                     'Email Address (verified / generic)', 'Phone / WhatsApp Number', 'LinkedIn Profile', 'Website URL']
     
     const csvContent = [
       headers.join(','),
       ...data.map(row => 
         [row.sNo, row.companyName, row.yearEstablished, row.headquarters, row.citiesRegionsCovered,
          row.ownershipType, row.noOfEmployees, row.revenueTurnover, row.keyContact, row.designation,
-         row.email, row.address, row.phoneWhatsApp, row.linkedinProfile, row.websiteURL]
+         row.emailAddress, row.phoneWhatsApp, row.linkedinProfile, row.websiteURL]
           .map(val => `"${String(val).replace(/"/g, '""')}"`)
           .join(',')
       )
