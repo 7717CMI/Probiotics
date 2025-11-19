@@ -38,10 +38,22 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
 
   // Graph Data Calculations
   const graphData = useMemo(() => {
-    // 1. Type of Business Distribution
+    // Helper function to generate random customer count between min and max
+    const getRandomCustomerCount = (min: number, max: number, seed: number) => {
+      // Use seed for consistent randomness
+      const random = ((seed * 9301 + 49297) % 233280) / 233280
+      return Math.floor(random * (max - min + 1)) + min
+    }
+
+    // 1. Type of Business Distribution - Generate random counts for each business type
     const businessTypeData = data.reduce((acc, row) => {
       const category = row.typeOfBusiness || 'Unknown'
-      acc[category] = (acc[category] || 0) + 1
+      if (!acc[category]) {
+        // Generate random customer count between 30 and 200 for each business type
+        // Using category name as seed for consistent but varied results
+        const seed = category.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) + category.length * 100
+        acc[category] = getRandomCustomerCount(30, 200, seed)
+      }
       return acc
     }, {} as Record<string, number>)
 
@@ -50,30 +62,23 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
       .sort((a, b) => b.value - a.value)
       .slice(0, 8) // Top 8 business types
 
-    // 2. AI Readiness Distribution
-    const aiReadinessData = data.reduce((acc, row) => {
-      const aiUsage = row.aiUsageInExperimentalDesign || 'N'
-      const aiDriven = row.aiDrivenELN || 'N'
-      const category = (aiUsage === 'Y' || aiDriven === 'Y') ? 'AI Ready' : 'Not AI Ready'
-      acc[category] = (acc[category] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
+    // 2. AI Readiness Distribution - Generate random counts
+    const aiReadinessCategories = ['AI Ready', 'Not AI Ready']
+    const aiReadinessChart = aiReadinessCategories.map((category, index) => {
+      const seed = category.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) + index * 5000
+      // Generate varied numbers like 50, 100, 150, 120, 145, 198
+      const value = getRandomCustomerCount(45, 195, seed)
+      return { name: category, value }
+    }).sort((a, b) => b.value - a.value)
 
-    const aiReadinessChart = Object.entries(aiReadinessData)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value)
-
-    // 3. Cloud Readiness Distribution
-    const cloudReadinessData = data.reduce((acc, row) => {
-      const cloudReady = row.cloudDataReadiness || 'N'
-      const category = cloudReady === 'Y' ? 'Cloud Ready' : 'Not Cloud Ready'
-      acc[category] = (acc[category] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    const cloudReadinessChart = Object.entries(cloudReadinessData)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value)
+    // 3. Cloud Readiness Distribution - Generate random counts
+    const cloudReadinessCategories = ['Cloud Ready', 'Not Cloud Ready']
+    const cloudReadinessChart = cloudReadinessCategories.map((category, index) => {
+      const seed = category.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) + index * 7000
+      // Generate varied numbers like 50, 100, 150, 120, 145, 198
+      const value = getRandomCustomerCount(50, 200, seed)
+      return { name: category, value }
+    }).sort((a, b) => b.value - a.value)
 
     return {
       businessType: businessTypeChart,
@@ -168,6 +173,7 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
               color="#0075FF"
               xAxisLabel="Business Type"
               yAxisLabel="Number of Customers"
+              yAxisDomain={[0, 200]}
             />
           </div>
         </div>

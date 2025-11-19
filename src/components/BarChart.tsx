@@ -19,9 +19,10 @@ interface BarChartProps {
   yAxisLabel?: string
   isVolume?: boolean
   showCountry?: boolean | string[]
+  yAxisDomain?: [number | string, number | string]
 }
 
-export function BarChart({ data, dataKey, nameKey, color = '#0075FF', xAxisLabel, yAxisLabel, isVolume = false, showCountry = false }: BarChartProps) {
+export function BarChart({ data, dataKey, nameKey, color = '#0075FF', xAxisLabel, yAxisLabel, isVolume = false, showCountry = false, yAxisDomain }: BarChartProps) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
 
@@ -112,7 +113,7 @@ export function BarChart({ data, dataKey, nameKey, color = '#0075FF', xAxisLabel
           width={90}
           tick={{ fill: isDark ? '#E2E8F0' : '#2D3748' }}
           tickMargin={15}
-          domain={[0, 'auto']}
+          domain={yAxisDomain || [0, 'auto']}
           allowDataOverflow={false}
           label={{
             value: yAxisLabel || 'Value',
