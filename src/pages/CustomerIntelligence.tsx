@@ -3,6 +3,8 @@ import { ArrowLeft, Download } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { getMSPCustomerData, MSPCustomerData } from '../utils/mspCustomerGenerator'
 import { useTheme } from '../context/ThemeContext'
+import { BarChart } from '../components/BarChart'
+import { PieChart } from '../components/PieChart'
 
 interface CustomerIntelligenceProps {
   onNavigate: (page: string) => void
@@ -35,6 +37,36 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
     const startIndex = (currentPage - 1) * itemsPerPage
     return data.slice(startIndex, startIndex + itemsPerPage)
   }, [data, currentPage, itemsPerPage])
+
+  // Graph Data Calculations
+  const graphData = useMemo(() => {
+    // 1. Customer Tier Distribution
+    const tierData = data.reduce((acc, row) => {
+      const tier = row.customerTier || 'Unknown'
+      acc[tier] = (acc[tier] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    const tierChart = Object.entries(tierData)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+
+    // 2. MSP Dependence Level Distribution
+    const mspDependenceData = data.reduce((acc, row) => {
+      const dependence = row.existingMSPDependence || 'Unknown'
+      acc[dependence] = (acc[dependence] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    const mspDependenceChart = Object.entries(mspDependenceData)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+
+    return {
+      tier: tierChart,
+      mspDependence: mspDependenceChart
+    }
+  }, [data])
 
   const exportToCSV = () => {
     const headers = Object.keys(data[0] || {})
@@ -184,6 +216,41 @@ export function CustomerIntelligence({ onNavigate }: CustomerIntelligenceProps) 
             India
             <span className="block text-xs mt-1 opacity-80">(50+ customers)</span>
           </button>
+        </div>
+      </div>
+
+      {/* Graphs Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Graph 1: Customer Tier Distribution */}
+        <div className={`p-6 rounded-xl shadow-lg ${isDark ? 'bg-navy-card border-2 border-navy-light' : 'bg-white border-2 border-gray-200'}`}>
+          <h3 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark mb-4">
+            Customer Tier Distribution
+          </h3>
+          <div className="h-[400px]">
+            <BarChart
+              data={graphData.tier}
+              dataKey="value"
+              nameKey="name"
+              color="#0075FF"
+              xAxisLabel="Customer Tier"
+              yAxisLabel="Number of Customers"
+            />
+          </div>
+        </div>
+
+        {/* Graph 2: MSP Dependence Level Distribution */}
+        <div className={`p-6 rounded-xl shadow-lg ${isDark ? 'bg-navy-card border-2 border-navy-light' : 'bg-white border-2 border-gray-200'}`}>
+          <h3 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark mb-4">
+            MSP Dependence Level Distribution
+          </h3>
+          <div className="h-[400px]">
+            <PieChart
+              data={graphData.mspDependence}
+              dataKey="value"
+              nameKey="name"
+              colors={['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']}
+            />
+          </div>
         </div>
       </div>
 
