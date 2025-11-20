@@ -18,7 +18,7 @@ export function Home({ onNavigate }: HomeProps) {
   const analysisTiles: AnalysisTile[] = [
     {
       title: "Customer Intelligence",
-      description: "Customer database and insights for Electronic Lab Notebook (ELN) Market",
+      description: "Customer database and insights for IT Managed Service Provider (MSP) Industry",
       icon: Users,
       id: "CustomerIntelligence",
       gradient: "#0075FF",
@@ -58,10 +58,10 @@ export function Home({ onNavigate }: HomeProps) {
         className="mb-10 text-center"
       >
         <h1 className="text-3xl md:text-4xl font-bold text-text-primary-light dark:text-text-primary-dark mb-2">
-          GLOBAL ELECTRONIC LAB NOTEBOOK (ELN) MARKET
+          IT MANAGED SERVICE PROVIDER (MSP) INDUSTRY
         </h1>
         <p className="text-lg text-electric-blue dark:text-cyan-accent">
-          Industry Insights, Trends, Outlook, and Opportunity Analysis, 2025-2032
+          Customer Intelligence Database
         </p>
       </motion.div>
 
@@ -77,7 +77,7 @@ export function Home({ onNavigate }: HomeProps) {
             Select Analysis Category
           </h2>
           <p className="text-center text-text-secondary-light dark:text-text-secondary-dark mb-8">
-            Access customer intelligence data across three comprehensive modules
+            Access customer intelligence data across Global, Asia, and India regions
           </p>
         </motion.div>
 
